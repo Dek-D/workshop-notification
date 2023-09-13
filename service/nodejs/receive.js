@@ -1,11 +1,18 @@
 import amqp from 'amqplib/callback_api'
-import { QUEUE_NAME, RABBITMQ_URL } from './secret'
-import firebase from 'firebase-admin'
+import { QUEUE_NAME, RABBITMQ_URL, PROJECT_ID, DEVICE_TOKEN } from './secret'
+import key from './workshop-dekd.json' assert { type: 'json' }
+import google from 'googleapis'
+import https from 'https'
 
-amqp.connect(RABBITMQ_URL, function (error0, connection) {
-    connection.createChannel(function (error1, channel) {
+const HOST = 'fcm.googleapis.com'
+const MESSAGING_SCOPE = 'https://www.googleapis.com/auth/firebase.messaging'
+const SCOPES = [MESSAGING_SCOPE]
+const PATH = '/v1/projects/' + PROJECT_ID + '/messages:send'
+
+amqp.connect(RABBITMQ_URL, function (_, connection) {
+    connection.createChannel(function (_, channel) {
         const queue = QUEUE_NAME
-        channel.assertQueue(queue)
+        channel.assertQueue(queue, { durable: false })
 
         console.log(
             '[*] Waiting for messages in %s. To exit press CTRL+C',
@@ -15,7 +22,17 @@ amqp.connect(RABBITMQ_URL, function (error0, connection) {
             queue,
             function (msg) {
                 console.log('[*] Received %s', msg.content.toString())
-                sendFcmMessage(JSON.parse(msg.content.toString()))
+                const content = JSON.parse(msg.content.toString())
+                sendFcmMessage({
+                    message: {
+                        token: DEVICE_TOKEN,
+                        notification: {
+                            title: content?.username,
+                            body: content?.title,
+                        },
+                        data: content,
+                    },
+                })
             },
             {
                 noAck: true,
@@ -26,9 +43,7 @@ amqp.connect(RABBITMQ_URL, function (error0, connection) {
 
 const getAccessToken = () => {
     return new Promise(function (resolve, reject) {
-        const path = `${process.cwd()}/`
-        const key = require(path)
-        const jwtClient = new google.auth.JWT(
+        const jwtClient = new google.Auth.JWT(
             key.client_email,
             null,
             key.private_key,

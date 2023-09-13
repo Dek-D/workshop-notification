@@ -1,3 +1,5 @@
 export const RABBITMQ_URL = ''
 export const QUEUE_NAME = ''
 export const DEVICE_TOKEN = ''
+export const CREDENTIALS = 'workshop-dekd.json'
+export const PROJECT_ID = 'workshop-dekd'

@@ -6,7 +6,8 @@
   "type": "module",
   "dependencies": {
     "amqplib": "^0.10.3",
-    "firebase-admin": "^11.10.1"
+    "firebase-admin": "^11.10.1",
+    "googleapis": "^126.0.1"
   },
   "scripts": {
     "send": "node --experimental-modules --es-module-specifier-resolution=node send.js",
