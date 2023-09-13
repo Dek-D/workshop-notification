@@ -10,7 +10,7 @@ import (
 )
 
 var rabbitmqURL = ""
-var queueName = "notification.dekd.niyay"
+var queueName = ""
 var message = map[string]string{
 	"username":    "",
 	"title":       "",
