@@ -1,0 +1,15 @@
+{
+  "name": "nodejs",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "send.js",
+  "type": "module",
+  "dependencies": {
+    "amqplib": "^0.10.3",
+    "firebase-admin": "^11.10.1"
+  },
+  "scripts": {
+    "send": "node --experimental-modules --es-module-specifier-resolution=node send.js",
+    "receive": "node --experimental-modules --es-module-specifier-resolution=node receive.js"
+  }
+}

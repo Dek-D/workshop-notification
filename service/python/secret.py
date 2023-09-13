@@ -1,0 +1,4 @@
+rabbitmqUrl = ''
+deviceToken = ''
+queueName = ''
+credentials = ''
