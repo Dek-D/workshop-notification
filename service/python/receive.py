@@ -6,7 +6,7 @@ from firebase_admin import credentials
 import secret
 import json
 
-cred = credentials.Certificate(os.getcwd() + '/'+ secret.credentials)
+cred = credentials.Certificate(os.getcwd() + '/' + secret.credentials)
 params = pika.URLParameters(secret.rabbitmqUrl)
 connection = pika.BlockingConnection(params)
 channel = connection.channel()
@@ -15,16 +15,17 @@ channel.queue_declare(queue=secret.queueName, passive=False,
 
 firebase_admin.initialize_app(cred)
 
+
 def callback(ch, method, properties, body):
     print('[*] Received: ' + str(body, 'UTF-8'))
     notifcation = json.loads(body.decode('utf-8'))
-    sendNotification(notifcation['username'],
+    sendNotification(notifcation['deviceToken'], notifcation['username'],
                      notifcation['title'],  notifcation['message'])
     if True:
         channel.basic_ack(delivery_tag=method.delivery_tag)
 
 
-def sendNotification(token,username, title, messages):
+def sendNotification(token, username, title, messages):
     message = messaging.Message(
         notification=messaging.Notification(
             title=username,

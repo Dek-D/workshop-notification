@@ -2,6 +2,7 @@ import pika
 import secret
 import json
 
+
 notification = {
     'username': '',
     'title': '',
